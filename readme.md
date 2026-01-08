@@ -2,6 +2,7 @@
 
 Repo for when I get a visual idea or want to recreate something I did in the past:
 
+- [Hello World](https://github.com/skirtapaieo/play-101/blob/main/hello-world/index.html) - a simple animated hello world with particle effects
 - ["Birds" flying around on a Karl Larsson background](/boids-karl-larsson/index.html) - originally made in Java, in 1997, as an applet, partially recreated in Three.js
 - [Atari 600 XL - lo-fi demo of animating letters and 8-bit music](/demo-atari600xl/600xl-visual-art-rev5.html) - originally made in Assembler, recreated using JavaScript
 - [Inventory-system](https://github.com/skirtapaieo/play-101/blob/main/Inventory-system/inventory.bas) - My first inventory program for my parents store - we came up with the idea to create article numbers with 1000's as spring season 1993 and so on - the program listed part of itself and then during inventory they entered the inventory of an article as a REM statement and then learned how to save and store on tape - so the program actually contained the inventory data as REM statements :-)
