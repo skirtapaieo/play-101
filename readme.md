@@ -12,5 +12,6 @@ Repo for when I get a visual idea or want to recreate something I did in the pas
 - [Sinecube](/sinecube/sinecube2.html) - waves and geometry, initially done in Assembler (https://archive.org/details/Atari_ST-3D_Graphics_Programming/page/n3/mode/2up), now you use JavaScript/P5, with computers a billion times better :-)
 - [Snake](/snake/snake-rev1.html)- used ChatGPT for this, it it from the Internets (just google and see), and when I asked it about it it denied :-)
 - [Solarsystem](/solarsystem/solar7.html) - seven iterations on a solarsystem ...
+- [Ticket Management](/ticket-management/index.html) - ärendehanteringsapp inspirerad av Freshservice, med ärenden, konversationer, statistik och filtrering
 
 
