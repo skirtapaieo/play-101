@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ärendehantering</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                    <rect x="9" y="3" width="6" height="4" rx="1"/>
+                </svg>
+                <span>Ärenden</span>
+            </div>
+            <ul class="sidebar-nav">
+                <li class="active" data-view="tickets">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    Alla ärenden
+                </li>
+                <li data-view="open">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    Öppna
+                </li>
+                <li data-view="closed">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Stängda
+                </li>
+                <li data-view="stats">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                    Statistik
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <!-- Ticket list view -->
+            <div id="ticket-list-view" class="view active">
+                <header class="view-header">
+                    <h1 id="view-title">Alla ärenden</h1>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" id="search-input" placeholder="Sök ärenden...">
+                        </div>
+                        <button class="btn btn-primary" id="btn-new-ticket">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Nytt ärende
+                        </button>
+                    </div>
+                </header>
+
+                <div class="filters">
+                    <select id="filter-priority">
+                        <option value="">Alla prioriteter</option>
+                        <option value="Låg">Låg</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hög">Hög</option>
+                        <option value="Akut">Akut</option>
+                    </select>
+                    <select id="filter-category">
+                        <option value="">Alla kategorier</option>
+                        <option value="Ärendehantering">Ärendehantering</option>
+                        <option value="Hårdvara">Hårdvara</option>
+                        <option value="Mjukvara">Mjukvara</option>
+                        <option value="Nätverk">Nätverk</option>
+                        <option value="Åtkomst">Åtkomst</option>
+                    </select>
+                    <select id="filter-group">
+                        <option value="">Alla grupper</option>
+                        <option value="MissionPoint">MissionPoint</option>
+                        <option value="Infrastruktur">Infrastruktur</option>
+                        <option value="Support">Support</option>
+                        <option value="Utveckling">Utveckling</option>
+                    </select>
+                </div>
+
+                <div class="ticket-table">
+                    <div class="table-header">
+                        <span class="col-id">ID</span>
+                        <span class="col-subject">Ämne</span>
+                        <span class="col-requester">Förfrågare</span>
+                        <span class="col-priority">Prioritet</span>
+                        <span class="col-status">Status</span>
+                        <span class="col-handler">Handläggare</span>
+                        <span class="col-date">Skapad</span>
+                    </div>
+                    <div id="ticket-list" class="table-body">
+                        <!-- Tickets rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ticket detail view -->
+            <div id="ticket-detail-view" class="view">
+                <header class="detail-header">
+                    <button class="btn btn-ghost" id="btn-back">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="19" y1="12" x2="5" y2="12"/>
+                            <polyline points="12 19 5 12 12 5"/>
+                        </svg>
+                        Tillbaka
+                    </button>
+                    <div class="detail-header-info">
+                        <span class="ticket-ref" id="detail-ref"></span>
+                        <h2 id="detail-subject"></h2>
+                    </div>
+                    <div class="detail-header-actions">
+                        <button class="btn btn-secondary" id="btn-edit-ticket">Redigera</button>
+                        <button class="btn btn-primary" id="btn-reply">Svara</button>
+                    </div>
+                </header>
+
+                <div class="detail-body">
+                    <div class="detail-main">
+                        <!-- Tabs -->
+                        <div class="tabs">
+                            <button class="tab active" data-tab="details">Detaljer</button>
+                            <button class="tab" data-tab="conversations">Konversationer</button>
+                            <button class="tab" data-tab="activity">Aktivitet</button>
+                            <button class="tab" data-tab="resolution">Lösning</button>
+                        </div>
+
+                        <!-- Tab: Details -->
+                        <div class="tab-content active" id="tab-details">
+                            <div class="detail-description">
+                                <h3>Beskrivning</h3>
+                                <div id="detail-description-text"></div>
+                            </div>
+                            <div class="detail-attachments">
+                                <h3>Bilagor</h3>
+                                <div id="detail-attachments-list">
+                                    <p class="empty-state">Det finns inga bilagor</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Conversations -->
+                        <div class="tab-content" id="tab-conversations">
+                            <div id="conversations-list">
+                                <!-- Conversations rendered here -->
+                            </div>
+                            <div class="reply-box" id="reply-box" style="display:none;">
+                                <h3 id="reply-title">Svara</h3>
+                                <textarea id="reply-text" placeholder="Skriv ditt svar..."></textarea>
+                                <div class="reply-actions">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="reply-private">
+                                        Privat anteckning
+                                    </label>
+                                    <div>
+                                        <button class="btn btn-ghost" id="btn-cancel-reply">Avbryt</button>
+                                        <button class="btn btn-primary" id="btn-send-reply">Skicka</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Activity -->
+                        <div class="tab-content" id="tab-activity">
+                            <div id="activity-list">
+                                <!-- Activity rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Tab: Resolution -->
+                        <div class="tab-content" id="tab-resolution">
+                            <div id="resolution-content">
+                                <p class="empty-state">Ingen lösning registrerad ännu.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar properties -->
+                    <aside class="detail-sidebar">
+                        <div class="status-badge-container">
+                            <span class="status-badge" id="detail-status-badge"></span>
+                            <span class="time-info" id="detail-time-info"></span>
+                        </div>
+
+                        <h3>Förfrågare</h3>
+                        <div class="property-card" id="detail-requester-card"></div>
+
+                        <h3>Egenskaper</h3>
+                        <div class="properties-grid">
+                            <div class="property">
+                                <label>Prioritet</label>
+                                <span id="detail-priority" class="priority-badge"></span>
+                            </div>
+                            <div class="property">
+                                <label>Status</label>
+                                <span id="detail-status"></span>
+                            </div>
+                            <div class="property">
+                                <label>Källa</label>
+                                <span id="detail-source"></span>
+                            </div>
+                            <div class="property">
+                                <label>Typ</label>
+                                <span id="detail-type"></span>
+                            </div>
+                            <div class="property">
+                                <label>Brådskande</label>
+                                <span id="detail-urgency"></span>
+                            </div>
+                            <div class="property">
+                                <label>Påverkan</label>
+                                <span id="detail-impact"></span>
+                            </div>
+                            <div class="property">
+                                <label>Grupp</label>
+                                <span id="detail-group"></span>
+                            </div>
+                            <div class="property">
+                                <label>Handläggare</label>
+                                <span id="detail-handler"></span>
+                            </div>
+                            <div class="property">
+                                <label>Avdelning</label>
+                                <span id="detail-department"></span>
+                            </div>
+                            <div class="property">
+                                <label>Kategori</label>
+                                <span id="detail-category"></span>
+                            </div>
+                            <div class="property">
+                                <label>Företag</label>
+                                <span id="detail-company"></span>
+                            </div>
+                            <div class="property">
+                                <label>Planerad start</label>
+                                <span id="detail-planned-start"></span>
+                            </div>
+                            <div class="property">
+                                <label>Planerad slut</label>
+                                <span id="detail-planned-end"></span>
+                            </div>
+                            <div class="property">
+                                <label>Taggar</label>
+                                <span id="detail-tags"></span>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Stats view -->
+            <div id="stats-view" class="view">
+                <header class="view-header">
+                    <h1>Statistik</h1>
+                </header>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-total">0</div>
+                        <div class="stat-label">Totalt antal ärenden</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-open">0</div>
+                        <div class="stat-label">Öppna ärenden</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-closed">0</div>
+                        <div class="stat-label">Stängda ärenden</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="stat-avg-time">-</div>
+                        <div class="stat-label">Snitt lösningstid</div>
+                    </div>
+                </div>
+                <div class="stats-charts">
+                    <div class="chart-card">
+                        <h3>Ärenden per prioritet</h3>
+                        <div id="chart-priority" class="bar-chart"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Ärenden per kategori</h3>
+                        <div id="chart-category" class="bar-chart"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Ärenden per grupp</h3>
+                        <div id="chart-group" class="bar-chart"></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Ärenden per status</h3>
+                        <div id="chart-status" class="bar-chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- New/Edit ticket modal -->
+            <div class="modal-overlay" id="ticket-modal" style="display:none;">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h2 id="modal-title">Nytt ärende</h2>
+                        <button class="btn btn-ghost btn-close" id="btn-close-modal">&times;</button>
+                    </div>
+                    <form id="ticket-form" class="modal-body">
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label for="form-subject">Ämne *</label>
+                                <input type="text" id="form-subject" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label for="form-description">Beskrivning</label>
+                                <textarea id="form-description" rows="4"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-requester">Förfrågare *</label>
+                                <input type="text" id="form-requester" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-email">E-post *</label>
+                                <input type="email" id="form-email" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-priority">Prioritet</label>
+                                <select id="form-priority">
+                                    <option value="Låg">Låg</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hög">Hög</option>
+                                    <option value="Akut">Akut</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-status">Status</label>
+                                <select id="form-status">
+                                    <option value="Öppen">Öppen</option>
+                                    <option value="Pågår">Pågår</option>
+                                    <option value="Väntar">Väntar</option>
+                                    <option value="Stängd">Stängd</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-type">Typ</label>
+                                <select id="form-type">
+                                    <option value="Tjänsteförfrågan">Tjänsteförfrågan</option>
+                                    <option value="Incident">Incident</option>
+                                    <option value="Problem">Problem</option>
+                                    <option value="Ändring">Ändring</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-source">Källa</label>
+                                <select id="form-source">
+                                    <option value="E-post">E-post</option>
+                                    <option value="Portal">Portal</option>
+                                    <option value="Telefon">Telefon</option>
+                                    <option value="Chat">Chat</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-urgency">Brådskande</label>
+                                <select id="form-urgency">
+                                    <option value="Låg">Låg</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hög">Hög</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-impact">Påverkan</label>
+                                <select id="form-impact">
+                                    <option value="Låg">Låg</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hög">Hög</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-group">Grupp</label>
+                                <select id="form-group">
+                                    <option value="">Välj grupp...</option>
+                                    <option value="MissionPoint">MissionPoint</option>
+                                    <option value="Infrastruktur">Infrastruktur</option>
+                                    <option value="Support">Support</option>
+                                    <option value="Utveckling">Utveckling</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-handler">Handläggare</label>
+                                <select id="form-handler">
+                                    <option value="">Ej tilldelad</option>
+                                    <option value="Jannica Svan">Jannica Svan</option>
+                                    <option value="Patrik Svensson">Patrik Svensson</option>
+                                    <option value="Stefan Molin">Stefan Molin</option>
+                                    <option value="Anna Lindberg">Anna Lindberg</option>
+                                    <option value="Erik Johansson">Erik Johansson</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-department">Avdelning</label>
+                                <select id="form-department">
+                                    <option value="IT">IT</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Ekonomi">Ekonomi</option>
+                                    <option value="Försäljning">Försäljning</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="form-category">Kategori</label>
+                                <select id="form-category">
+                                    <option value="Ärendehantering">Ärendehantering</option>
+                                    <option value="Hårdvara">Hårdvara</option>
+                                    <option value="Mjukvara">Mjukvara</option>
+                                    <option value="Nätverk">Nätverk</option>
+                                    <option value="Åtkomst">Åtkomst</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="form-company">Företag</label>
+                                <input type="text" id="form-company" value="Vectura">
+                            </div>
+                            <div class="form-group">
+                                <label for="form-tags">Taggar (kommaseparerade)</label>
+                                <input type="text" id="form-tags" placeholder="t.ex. wrike, licens">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-ghost" id="btn-cancel-form">Avbryt</button>
+                            <button type="submit" class="btn btn-primary">Spara</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
